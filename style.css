@@ -1,0 +1,32 @@
+/* style.css */
+.title {
+    color: #ff6f61; /* Bright coral color for visibility */
+    font-weight: bold;
+}
+
+.hero-text {
+    color: #1e90ff; /* Dodger blue color for visibility */
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.result-box.suspicious {
+    background-color: #ffcccb; /* Light red background */
+    color: #d8000c; /* Dark red text */
+    font-weight: bold;
+}
+
+.result-box.clean {
+    background-color: #ccffcc; /* Light green background */
+    color: #007300; /* Dark green text */
+    font-weight: bold;
+}
+
+.about-text {
+    color: #5f9ea0; /* Cadet blue color */
+    font-weight: bold;
+}
+
+.tech-stack img {
+    filter: brightness(0) invert(1); /* Invert colors for icons */
+}
