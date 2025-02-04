@@ -11,26 +11,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python version
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - name: Create and start virtual environment
+      - name: Create and activate virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
+          pip install --upgrade pip
 
       - name: Install dependencies
-        run: pip install --upgrade pip && pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      # Zip without unnecessary files
+      - name: Create startup script for Azure
+        run: |
+          echo "#!/bin/bash" > startup.sh
+          echo "source venv/bin/activate" >> startup.sh
+          echo "streamlit run app.py --server.port=8000 --server.address=0.0.0.0" >> startup.sh
+          chmod +x startup.sh
+
       - name: Zip artifact for deployment
-        run: zip -r release.zip . -x "venv/*" ".git/*" "__pycache__/*"
+        run: zip -r release.zip . -x "venv/*" ".git/*" "__pycache__/*" "*.md"
 
-      - name: Upload artifact for deployment jobs
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -52,10 +60,12 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
         with:
           app-name: 'videomanipulationsystem'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6CB58AE348684F818C6AF345C9B8A99B }}
+          package: .
+
